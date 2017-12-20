@@ -1,0 +1,19 @@
+{
+  "name": "reconnect-blockchain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SoleneDc/Reconnect_Blockchain.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SoleneDc/Reconnect_Blockchain/issues"
+  },
+  "homepage": "https://github.com/SoleneDc/Reconnect_Blockchain#readme"
+}
