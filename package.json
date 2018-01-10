@@ -2,7 +2,7 @@
   "name": "reconnect-blockchain",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/SoleneDc/Reconnect_Blockchain/issues"
   },
-  "homepage": "https://github.com/SoleneDc/Reconnect_Blockchain#readme"
+  "homepage": "https://github.com/SoleneDc/Reconnect_Blockchain#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "mongoose": "^4.13.9"
+  }
 }

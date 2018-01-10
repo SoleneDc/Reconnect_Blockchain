@@ -1,4 +1,4 @@
-const apiSecret = require('./apiSecret.js');
+const apiSecret = require('../config.js');
 const requestify = require('requestify');
 
 const apiUrl = apiSecret.baseUrl + 'appli/rosalie/beneficiaire/';
