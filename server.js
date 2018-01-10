@@ -25,7 +25,7 @@ mongoose.connect(config.db_uri, { useMongoClient: true })
 
 // Imports
 var bears = require('./api/routes/bears')
-
+var bears = require('./api/routes/stampings')
 // Routes
 app.use('/api/bears', bears);
 

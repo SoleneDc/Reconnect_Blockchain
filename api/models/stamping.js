@@ -6,7 +6,7 @@ var Agent        = require('./agent');
 
 var StampingSchema   = new Schema({
     agent: Agent,
-    user_id: Int,
+    user_id: Number,
     doc_name: String,
     ots_file: String
 });

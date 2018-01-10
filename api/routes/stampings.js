@@ -15,7 +15,7 @@ router.route('/')
                     res.send(err)
                 } else {
                     //envoie le fichier pdf??
-                    res.json({ message: 'Your stamp of ' + stamp.doc_name + ' has been created with id ' + stamp._id + 'by' + stamp.agent'!' })
+                    res.json({ message: 'Your stamp of ' + stamp.doc_name + ' has been created with id ' + stamp._id + 'by' })
                 }
             })
         }
