@@ -1,14 +1,12 @@
 var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
-var Agent        = require('./agent');
-
 
 var StampingSchema   = new Schema({
-    agent: Agent,
-    user_id: Int,
+    agent: { type: Schema.Types.ObjectId , ref: 'Agent' },
+    user_id: String,
     doc_name: String,
     ots_file: String
 });
 
-module.exports = mongoose.model('Stamping', StampingSchema);
+module.exports =  mongoose.model('Stamping', StampingSchema);
