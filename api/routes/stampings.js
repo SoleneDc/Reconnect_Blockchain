@@ -16,15 +16,15 @@ router.route('/')
     })
 
 
-router.route('/:namespace/:user_id')
+router.route('/:namespace/:userId')
     .get(function (req, res) {
         Agent.findOne(
             { namespace: req.params.namespace },
             function (err, agent) {
                 if (err) { res.send(err) } else {
                     Stamping.findOne({
-                        agent: agent._id,
-                        user_id: req.params.user_id
+                        agentId: agent._id,
+                        userId: req.params.userId
                     }, function (err, stamping) {
                         if (err) { res.send(err) } else {
                             res.json(stamping)
@@ -37,14 +37,14 @@ router.route('/:namespace/:user_id')
         var stamping = new Stamping()
         Agent.findOne({ namespace: req.params.namespace }, function (err, agent) {
             if (err) { res.send(err) } else {
-                stamping.agent = agent._id
-                stamping.user_id = req.params.user_id
-                stamping.doc_name = req.body.doc_name
-                stamping.ots_file = req.body.ots_file
+                stamping.agentId = agent._id
+                stamping.userId = req.params.userId
+                stamping.docName = req.body.docName
+                stamping.otsFile = req.body.otsFile
                 stamping.save(function (err) {
                     if (err) { res.send(err) } else {
                         res.json({ message:
-                            'Your stamping of ' + stamping.doc_name
+                            'Your stamping of ' + stamping.docName
                             + ' has been created with id ' + stamping._id
                             + ' by ' + agent.name
                             + '.\n Stamping on OTS started. '})
@@ -57,18 +57,18 @@ router.route('/:namespace/:user_id')
     })
 
 
-router.route('/:namespace/:user_id/verify')
+router.route('/:namespace/:userId/verify')
     .post(function (req, res) {
-        var doc_name = req.body.doc_name
-        var ots_file = req.body.ots_file
-        var file_to_verify = req.body.file_to_verify
+        var docName = req.body.docName
+        var otsFile = req.body.otsFile
+        var fileToVerify = req.body.fileToVerify
         Agent.findOne(
             { namespace: req.params.namespace },
             function (err, agent) {
                 if (err) { res.send(err) } else {
                     Stamping.findOne({
-                        agent: agent._id,
-                        user_id: req.params.user_id
+                        agentId: agent._id,
+                        userId: req.params.userId
                     }, function (err, stamping) {
                         if (err) { res.send(err) } else {
                             console.log('nous appelons ici la fonction verify')
