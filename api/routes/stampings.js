@@ -57,4 +57,27 @@ router.route('/:namespace/:user_id')
     })
 
 
+router.route('/:namespace/:user_id/verify')
+    .post(function (req, res) {
+        var doc_name = req.body.doc_name
+        var ots_file = req.body.ots_file
+        var file_to_verify = req.body.file_to_verify
+        Agent.findOne(
+            { namespace: req.params.namespace },
+            function (err, agent) {
+                if (err) { res.send(err) } else {
+                    Stamping.findOne({
+                        agent: agent._id,
+                        user_id: req.params.user_id
+                    }, function (err, stamping) {
+                        if (err) { res.send(err) } else {
+                            console.log('nous appelons ici la fonction verify')
+                        }
+                    })
+                }
+            })
+    })
+
+
+
 module.exports = router
