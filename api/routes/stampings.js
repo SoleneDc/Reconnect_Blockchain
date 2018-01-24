@@ -37,10 +37,10 @@ router.route('/:namespace/:userId')
         var stamping = new Stamping()
         Agent.findOne({ namespace: req.params.namespace }, function (err, agent) {
             if (err) { res.send(err) } else {
-                stamping.agentId = agent._id
+                //stamping.agentId = agent._id
                 stamping.userId = req.params.userId
                 stamping.docName = req.body.docName
-                stamping.otsFile = req.body.otsFile
+
                 stamping.save(function (err) {
                     if (err) { res.send(err) } else {
                         res.json({ message:
@@ -48,8 +48,7 @@ router.route('/:namespace/:userId')
                             + ' has been created with id ' + stamping._id
                             + ' by ' + agent.name
                             + '.\n Stamping on OTS started. '})
-                        otsManager.stamp('README.md')
-                        res.json({ message: 'You created a stamping.' })
+                        otsManager.stamp('README.md',stamping,agent)
                     }
                 })
 
@@ -61,22 +60,22 @@ router.route('/:namespace/:userId')
 router.route('/:namespace/:userId/verify')
     .post(function (req, res) {
         var docName = req.body.docName
-        var otsFile = req.body.otsFile
+        //var otsFile = req.body.otsFile
         var fileToVerify = req.body.fileToVerify
         Agent.findOne(
             { namespace: req.params.namespace },
             function (err, agent) {
                 if (err) { res.send(err) } else {
-                    Stamping.findOne({
-                        agentId: agent._id,
-                        userId: req.params.userId
-                    }, function (err, stamping) {
-                        if (err) { res.send(err) } else {
-                            otsManager.verify('README.md','README.md.ots');
+                    // Stamping.findOne({
+                    //     agentId: agent._id,
+                    //     userId: req.params.userId
+                    // function (err, stamping) {
+                    //     if (err) { res.send(err) } else {
+                            otsManager.verify('README.md',req,'README.md.ots');
                             res.json({ message: 'You are verifying your stamping.' })
                         }
-                    })
-                }
+                   // })
+                //}
             })
     })
 
