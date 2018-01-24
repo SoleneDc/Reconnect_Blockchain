@@ -83,14 +83,13 @@ router.route('/:namespace/:userId')
                                 res.status(err.statusCode || 500).json(err)
                             }
                             else {
+                                otsManager.stamp('README.md')
                                 res.json({ message:
                                     'Your stamping of ' + stamping.fileName
                                     + ' has been created with id ' + stamping._id
                                     + ' by ' + agent.name
                                     + '.\n Stamping on OTS started. '
                                 })
-                                otsManager.stamp('README.md')
-                                res.json({message: 'You created a stamping.'})
                             }
                         })
                     }
