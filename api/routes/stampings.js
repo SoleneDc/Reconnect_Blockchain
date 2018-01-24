@@ -15,7 +15,7 @@ router.route('/')
             })
     })
 
-router.route('/:namespace/:userId/:docName')
+router.route('/:namespace/:userId/:fileName')
     .get(function (req, res) {
         Agent.findOne(
             {namespace: req.params.namespace},
@@ -25,7 +25,7 @@ router.route('/:namespace/:userId/:docName')
                     Stamping.findOne({
                         agentId: agent._id,
                         userId: req.params.userId,
-                        docName: req.params.docName
+                        fileName: req.params.fileName
                     }, function (err, stamping) {
                         if (err) { res.status(err.statusCode || 500).json(err) }
                         else if (stamping === null) {
@@ -43,30 +43,31 @@ router.route('/:namespace/:userId')
     .post(function (req, res) {
         var stamping = new Stamping()
         if (req.body.file) {
-            Agent.findOne({namespace: req.params.namespace}, function (err, agent) {
-                if (err) {
-                    res.send(err)
-                } else {
-                    stamping.agentId = agent._id
-                    stamping.userId = req.params.userId
-                    stamping.docName = req.body.file.name // TODO : Récupérer le vrai nom du fichier
-                    stamping.save(function (err) {
-                        if (err) {
-                            res.status(err.statusCode || 500).json(err)
-                        }
-                        else {
-                            res.json({
-                                message:
-                                'Your stamping of ' + stamping.docName
-                                + ' has been created with id ' + stamping._id
-                                + ' by ' + agent.name
-                                + '.\n Stamping on OTS started. '
-                            })
-                            otsManager.stamp('README.md')
-                            res.json({message: 'You created a stamping.'})
-                        }
-                    })
-                }
+            Agent.findOne(
+                { namespace: req.params.namespace },
+                function (err, agent) {
+                    if (err) {
+                        res.status(err.statusCode || 500).json(err)
+                    } else {
+                        stamping.agentId = agent._id
+                        stamping.userId = req.params.userId
+                        stamping.fileName = req.body.file.name // TODO : Récupérer le vrai nom du fichier
+                        stamping.save(function (err) {
+                            if (err) {
+                                res.status(err.statusCode || 500).json(err)
+                            }
+                            else {
+                                res.json({ message:
+                                    'Your stamping of ' + stamping.fileName
+                                    + ' has been created with id ' + stamping._id
+                                    + ' by ' + agent.name
+                                    + '.\n Stamping on OTS started. '
+                                })
+                                otsManager.stamp('README.md')
+                                res.json({message: 'You created a stamping.'})
+                            }
+                        })
+                    }
             })
         }
         else {
@@ -87,7 +88,7 @@ router.route('/:namespace/:userId/verify')
                         Stamping.findOne({
                             agentId: agent._id,
                             userId: req.params.userId,
-                            docName: req.body.file.name // TODO : Récupérer le vrai nom du fichier
+                            fileName: req.body.file.name // TODO : Récupérer le vrai nom du fichier
                         }, function (err, stamping) {
                             if (err) {
                                 res.status(err.statusCode || 500).json(err)

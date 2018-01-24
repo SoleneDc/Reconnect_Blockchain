@@ -5,7 +5,7 @@ var Schema       = mongoose.Schema;
 var StampingSchema   = new Schema({
     agentId: { type: Schema.Types.ObjectId , ref: 'Agent' },
     userId: String,
-    docName: String,
+    fileName: String,
     otsFile: String
 });
 
