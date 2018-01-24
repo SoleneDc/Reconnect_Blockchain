@@ -83,12 +83,17 @@ router.route('/:namespace/:userId')
                                 res.status(err.statusCode || 500).json(err)
                             }
                             else {
-                                otsManager.stamp('README.md')
-                                res.json({ message:
-                                    'Your stamping of ' + stamping.fileName
-                                    + ' has been created with id ' + stamping._id
-                                    + ' by ' + agent.name
-                                    + '.\n Stamping on OTS started. '
+                                otsManager.stamp('README.md').then(function (r) {
+                                    if (r.success) {
+                                        res.json({
+                                            message: 'Your stamping of ' + stamping.docName
+                                            + ' has been created with id ' + stamping._id
+                                            + ' by ' + agent.name,
+                                            otsResult: r.result
+                                        })
+                                    } else {
+                                        res.json(r.error)
+                                    }
                                 })
                             }
                         })
@@ -122,8 +127,16 @@ router.route('/:namespace/:userId/verify')
                                 res.status(404).json({ message: 'No corresponding stamping was found.' })
                             }
                             else {
-                                otsManager.verify('README.md','README.md.ots');
-                                res.json({ message: 'You are verifying your stamping.' })
+                                otsManager.verify('README.md','README.md.ots').then(function (r) {
+                                    if (r.success) {
+                                        res.json({
+                                            message: 'Your stamping of ' + stamping.docName  + ' is verified.',
+                                            otsResult: r.result
+                                        })
+                                    } else {
+                                        res.json(r.error)
+                                    }
+                                })
                             }
                         })
                     }
