@@ -14,6 +14,17 @@ router.route('/')
                 }
             })
     })
+    .delete(function (req, res) {
+        Stamping.remove(
+            {},
+            function (err) {
+                if (err) { res.status(err.statusCode || 500).json(err) }
+                else {
+                    res.json({ message: 'All stampings deleted!' })
+                }
+            }
+        )
+    })
 
 router.route('/:namespace/:userId/:fileName')
     .get(function (req, res) {
