@@ -40,7 +40,6 @@ router.route('/:namespace/:userId')
                 //stamping.agentId = agent._id
                 stamping.userId = req.params.userId
                 stamping.docName = req.body.docName
-
                 stamping.save(function (err) {
                     if (err) { res.send(err) } else {
                         res.json({ message:
@@ -66,17 +65,19 @@ router.route('/:namespace/:userId/verify')
             { namespace: req.params.namespace },
             function (err, agent) {
                 if (err) { res.send(err) } else {
-                    // Stamping.findOne({
-                    //     agentId: agent._id,
-                    //     userId: req.params.userId
-                    // function (err, stamping) {
-                    //     if (err) { res.send(err) } else {
-                            otsManager.verify('README.md',req,'README.md.ots');
+                    Stamping.findOne({
+                        agentId: agent._id,
+                        userId: req.params.userId,
+                        docName: req.body.docName},
+
+                    function (err, stamping) {
+                        if (err) { res.send(err) } else {
+                            otsManager.verify('README.md',req,agent,stamping);
                             res.json({ message: 'You are verifying your stamping.' })
                         }
-                   // })
+                    })
                 //}
-            })
+            }})
     })
 
 

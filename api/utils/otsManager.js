@@ -1,7 +1,7 @@
 const OpenTimestamps = require('javascript-opentimestamps')
 const crypto = require('crypto')
 const fs = require('fs')
-
+var Stamping = require('../models/stamping');
 
 var stamp = function (file,stamping,agent) {
     var hasher = crypto.createHash('sha256')
@@ -23,28 +23,22 @@ var stamp = function (file,stamping,agent) {
 
 //DOESN'T WORK YET
 
-var verify = function (file,req,fileOts) {
+var verify = function (file,req,agent,stamping) {
     fs.ReadStream(file).on('data', function (data) {
         var hasher = crypto.createHash('sha256')
         var hash = hasher.update(data).digest('hex')
         var hashBytes = OpenTimestamps.Utils.hexToBytes(hash)
         var detached = OpenTimestamps.DetachedTimestampFile.fromHash(new OpenTimestamps.Ops.OpSHA256(), hashBytes)
-
-        Stamping.findOne(
-            {
-                 agentId: agent._id,
-                 userId: req.params.userId
-            },
-            function(err, stamping) {
+         //   function(err, stamping) {
                 var fileOts = new Uint8Array(stamping.otsFile);
 
                 // fs.ReadStream(fileOts).on('data', function (dataOts) {
-                var detachedOts = OpenTimestamps.DetachedTimestampFile.deserialize(dataOts)
+                var detachedOts = OpenTimestamps.DetachedTimestampFile.deserialize(fileOts)
                 OpenTimestamps.verify(detachedOts, detached).then(function (verifyResult) {
                     console.log(verifyResult)
                 })
-            }
-        )
+            //}
+
     })
 }
 
