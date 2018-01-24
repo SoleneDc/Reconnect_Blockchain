@@ -2,7 +2,7 @@ var Stamping = require('../models/stamping');
 var Agent = require('../models/agent');
 var express = require('express');
 var router = express.Router();
-
+var otsManager = require('../utils/otsManager')
 
 router.route('/')
     .get(function (req, res) {
@@ -43,7 +43,12 @@ router.route('/:namespace/:user_id')
                 stamping.ots_file = req.body.ots_file
                 stamping.save(function (err) {
                     if (err) { res.send(err) } else {
-                        res.json({ message: 'Your stamp of ' + stamping.doc_name + ' has been created with id ' + stamping._id + ' by ' + agent.name })
+                        res.json({ message:
+                            'Your stamping of ' + stamping.doc_name
+                            + ' has been created with id ' + stamping._id
+                            + ' by ' + agent.name
+                            + '.\n Stamping on OTS started. '})
+                        otsManager.stamp('README.md')
                     }
                 })
 
