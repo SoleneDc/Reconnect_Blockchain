@@ -49,6 +49,7 @@ router.route('/:namespace/:userId')
                             + ' by ' + agent.name
                             + '.\n Stamping on OTS started. '})
                         otsManager.stamp('README.md')
+                        res.json({ message: 'You created a stamping.' })
                     }
                 })
 
@@ -71,7 +72,8 @@ router.route('/:namespace/:userId/verify')
                         userId: req.params.userId
                     }, function (err, stamping) {
                         if (err) { res.send(err) } else {
-                            console.log('nous appelons ici la fonction verify')
+                            otsManager.verify('README.md','README.md.ots');
+                            res.json({ message: 'You are verifying your stamping.' })
                         }
                     })
                 }
