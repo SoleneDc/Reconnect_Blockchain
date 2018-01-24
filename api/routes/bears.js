@@ -9,7 +9,7 @@ router.route('/')
             {},
             function (err, bears) {
                 if (err) {
-                    res.send(err)
+                    res.status(err.statusCode || 500).json(err)
                 } else {
                     res.json(bears)
                 }
@@ -21,7 +21,7 @@ router.route('/')
             bear.name = req.body.name
             bear.save(function (err) {
                 if (err) {
-                    res.send(err)
+                    res.status(err.statusCode || 500).json(err)
                 } else {
                     res.json({ message: 'Your bear ' + bear.name + ' has been created with id ' + bear._id +'!' })
                 }
@@ -38,7 +38,7 @@ router.route('/:bear_id')
             req.params.bear_id,
             function (err, bear) {
                 if (err) {
-                    res.send(err)
+                    res.status(err.statusCode || 500).json(err)
                 } else {
                     res.json(bear)
                 }
@@ -49,13 +49,13 @@ router.route('/:bear_id')
             req.params.bear_id,
             function (err, bear) {
                 if (err) {
-                    res.send(err)
+                    res.status(err.statusCode || 500).json(err)
                 } else {
                     if (req.body.name) {
                         bear.name = req.body.name
                         bear.save(function (err) {
                             if (err) {
-                                res.send(err)
+                                res.status(err.statusCode || 500).json(err)
                             } else {
                                 res.json({
                                     message: 'Your bear ' + bear.name + ' has been updated!',
@@ -74,7 +74,7 @@ router.route('/:bear_id')
             { _id: req.params.bear_id },
             function (err, bear) {
                 if (err) {
-                    res.send(err)
+                    res.status(err.statusCode || 500).json(err)
                 } else {
                     res.json({ message: 'Bear deleted!' })
                 }

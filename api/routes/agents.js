@@ -8,7 +8,7 @@ router.route('/')
         Agent.find(
             {},
             function (err, agents) {
-                if (err) { res.send(err) } else {
+                if (err) { res.status(err.statusCode || 500).json(err) } else {
                     res.json(agents)
                 }
             })
@@ -19,7 +19,7 @@ router.route('/')
             agent.name = req.body.name
             agent.namespace = req.body.namespace
             agent.save(function (err) {
-                if (err) { res.send(err) } else {
+                if (err) { res.status(err.statusCode || 500).json(err) } else {
                     res.json({ message: 'Your agent ' + agent.name + ' has been created with id ' + agent._id +'!' })
                 }
             })
