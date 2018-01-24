@@ -18,7 +18,7 @@ router.route('/')
 router.route('/:namespace/:userId/:fileName')
     .get(function (req, res) {
         Agent.findOne(
-            {namespace: req.params.namespace},
+            { namespace: req.params.namespace },
             function (err, agent) {
                 if (err) { res.status(err.statusCode || 500).json(err) }
                 else {
@@ -38,6 +38,32 @@ router.route('/:namespace/:userId/:fileName')
                 }
             })
     })
+    .delete(function (req, res) {
+        Agent.findOne(
+            { namespace: req.params.namespace },
+            function (err, agent) {
+                if (err) {
+                    res.status(err.statusCode || 500).json(err)
+                }
+                else {
+                    Stamping.remove({
+                        agentId: agent._id,
+                        userId: req.params.userId,
+                        fileName: req.params.fileName
+                    }, function (err, stamping) {
+                        if (err) {
+                            res.status(err.statusCode || 500).json(err)
+                        }
+                        else if (stamping === null) {
+                            res.status(404).json({message: 'No corresponding stamping was found.'})
+                        }
+                        else {
+                            res.json({message: 'Stamping of ' + req.params.fileName + ' was deleted.'})
+                        }
+                    })
+                }
+            })
+    })
 
 router.route('/:namespace/:userId')
     .post(function (req, res) {
@@ -51,7 +77,7 @@ router.route('/:namespace/:userId')
                     } else {
                         stamping.agentId = agent._id
                         stamping.userId = req.params.userId
-                        stamping.fileName = req.body.file.name // TODO : Récupérer le vrai nom du fichier
+                        stamping.fileName = req.body.fileName // TODO : Récupérer le vrai nom du fichier
                         stamping.save(function (err) {
                             if (err) {
                                 res.status(err.statusCode || 500).json(err)
@@ -88,7 +114,7 @@ router.route('/:namespace/:userId/verify')
                         Stamping.findOne({
                             agentId: agent._id,
                             userId: req.params.userId,
-                            fileName: req.body.file.name // TODO : Récupérer le vrai nom du fichier
+                            fileName: req.body.fileName // TODO : Récupérer le vrai nom du fichier
                         }, function (err, stamping) {
                             if (err) {
                                 res.status(err.statusCode || 500).json(err)
