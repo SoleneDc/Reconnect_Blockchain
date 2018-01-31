@@ -3,7 +3,7 @@ const crypto = require('crypto')
 const fs = require('fs')
 
 
-var stamp = function (file, stamping, agent) {
+var stamp = function (file) {
     return new Promise(function (resolve) {
         try {
             var hasher = crypto.createHash('sha256')
@@ -11,18 +11,16 @@ var stamp = function (file, stamping, agent) {
                 var hash = hasher.update(data).digest('hex')
                 var hashBytes = OpenTimestamps.Utils.hexToBytes(hash)
                 var detached = OpenTimestamps.DetachedTimestampFile.fromHash(new OpenTimestamps.Ops.OpSHA256(), hashBytes)
+
                 OpenTimestamps.stamp(detached)
                     .then(function () {
-                        var fileOts = detached.serializeToBytes()
+                        var otsFile = Buffer(detached.serializeToBytes())
                         var infoResult = OpenTimestamps.info(detached)
                         console.log(infoResult)
-                        stamping.otsFile = Buffer(fileOts)
-                        stamping.agentId = agent._id
-                        stamping.save()
-                        resolve({success: true, result: infoResult})
+                        resolve({ success: true, otsFile: otsFile, result: infoResult })
                     })
                     .catch(function (err) {
-                        resolve({success: false, error: err})
+                        resolve({ success: false, error: err })
                     })
             })
         }
@@ -32,7 +30,7 @@ var stamp = function (file, stamping, agent) {
     })
 }
 
-var verify = function (file, req, agent, stamping) {
+var verify = function (file, otsFile) {
     return new Promise(function (resolve) {
         try {
             fs.ReadStream(file).on('data', function (data) {
@@ -40,8 +38,10 @@ var verify = function (file, req, agent, stamping) {
                 var hash = hasher.update(data).digest('hex')
                 var hashBytes = OpenTimestamps.Utils.hexToBytes(hash)
                 var detached = OpenTimestamps.DetachedTimestampFile.fromHash(new OpenTimestamps.Ops.OpSHA256(), hashBytes)
-                var fileOts = new Uint8Array(stamping.otsFile);
+
+                var fileOts = new Uint8Array(otsFile);
                 var detachedOts = OpenTimestamps.DetachedTimestampFile.deserialize(fileOts)
+
                 OpenTimestamps.verify(detachedOts, detached)
                     .then(function (verifyResult) {
                         console.log(verifyResult)
