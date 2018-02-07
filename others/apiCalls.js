@@ -1,28 +1,53 @@
-const apiSecret = require('../config.js');
-const requestify = require('requestify');
+const request = require('request')
+const fs = require('fs')
 
-const apiUrl = apiSecret.baseUrl + 'appli/rosalie/beneficiaire/';
+const config = require('../config.js')
+
+
+const apiUrl = config.baseUrl + 'appli/rosalie/beneficiaire/'
 
 function getRosalieUser(idRosalie) {
-    return apiSecret.getToken().then(function (value) {
-        var url = apiUrl + idRosalie;
-        var params = {
-            access_token: value
-        };
+    return config.getToken().then(function (r) {
+        var url = apiUrl + idRosalie.toString()
+        var qs = { access_token: r }
 
-        return new Promise(resolve => {
-            requestify.get(url, {params: params})
-            .then(function(r) {
-                resolve(r.getBody());
+        return new Promise(function (resolve) {
+            request.get({ url: url, qs: qs, json: true }, function (err, resp, body) {
+                if (err) { resolve("Something happened in getRosalieUser.\n", err) }
+                else { resolve(body) }
             })
-            .fail(function(err) {
-                resolve("Something happened:", err);
-            });
-    });
-    });
+        })
+    })
 }
 
-getRosalieUser('1').then(value => console.log(value));
+getRosalieUser(1).then(function (r) {
+    console.log(r)
+})
+
+function uploadFile(idRosalie, input_file) {
+    return config.getToken().then(function (r) {
+        var url = apiUrl + idRosalie.toString() + '/uploadFile'
+        var qs = {
+            access_token: r,
+            idRosalie: idRosalie
+        }
+        var formData = {
+            file: fs.createReadStream(input_file)
+        }
+
+        return new Promise(function (resolve) {
+            request.post({ url: url, qs: qs, formData: formData, json: true }, function (err, resp, body) {
+                if (err) { resolve('Upload failed.\n', err) }
+                else { resolve(body) }
+            })
+        })
+    })
+}
+
+uploadFile(1, 'others/Placeholder.pdf').then(function (r) {
+    console.log(r)
+})
+
 
 
 // def create_rosalie_user(idRosalie, nom, prenom, email, dateDeNaissance, telephone):
@@ -40,12 +65,6 @@ getRosalieUser('1').then(value => console.log(value));
 // }
 // return requests.post(url, params=params, data=data).json()
 //
-// def get_rosalie_user(idRosalie):
-// url = API_URL + '/' + idRosalie
-// params = {
-//     'access_token': token
-// }
-// return requests.get(url, params=params).json()
 //
 // def edit_rosalie_user(idRosalie, **kwargs):
 // url = API_URL + '/' + idRosalie
