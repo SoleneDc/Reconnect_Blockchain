@@ -1,53 +1,53 @@
-const apiSecret = require('../config.js')
-const requestify = require('requestify')
 const request = require('request')
 const fs = require('fs')
 
-const apiUrl = apiSecret.baseUrl + 'appli/rosalie/beneficiaire/'
+const config = require('../config.js')
 
-// TODO : Homogénéiser pour n'utiliser que request (et plus requestify)
+
+const apiUrl = config.baseUrl + 'appli/rosalie/beneficiaire/'
 
 function getRosalieUser(idRosalie) {
-    return apiSecret.getToken().then(function (resp) {
-        var url = apiUrl + idRosalie
-        var params = { access_token: resp }
+    return config.getToken().then(function (r) {
+        var url = apiUrl + idRosalie.toString()
+        var qs = { access_token: r }
 
         return new Promise(function (resolve) {
-            requestify.get(url, { params: params })
-                .then(function(r) {
-                    resolve(r.getBody())
-                })
-                .fail(function(err) {
-                    resolve("Something happened in getRosalieUser :", err.getBody(), err.getCode())
-                })
+            request.get({ url: url, qs: qs, json: true }, function (err, resp, body) {
+                if (err) { resolve("Something happened in getRosalieUser.\n", err) }
+                else { resolve(body) }
+            })
         })
     })
 }
 
-getRosalieUser('1').then(function (resp) {
-    console.log(resp)
+getRosalieUser(1).then(function (r) {
+    console.log(r)
 })
 
-function uploadFile3(idRosalie) {
-    return apiSecret.getToken().then(function (resp) {
+function uploadFile(idRosalie, input_file) {
+    return config.getToken().then(function (r) {
         var url = apiUrl + idRosalie.toString() + '/uploadFile'
-        var params = {
-            access_token: resp,
+        var qs = {
+            access_token: r,
             idRosalie: idRosalie
         }
-        url += '?access_token=' + params.access_token + '&idRosalie=' + params.idRosalie
         var formData = {
-            file: fs.createReadStream('others/Placeholder.pdf')
+            file: fs.createReadStream(input_file)
         }
 
-        request.post({ url: url, formData: formData }, function optionalCallback(err, httpResponse, body) {
-            if (err) { return console.error('upload failed:', err) }
-            else { console.log('Upload successful!  Server responded with:', body) };
+        return new Promise(function (resolve) {
+            request.post({ url: url, qs: qs, formData: formData, json: true }, function (err, resp, body) {
+                if (err) { resolve('Upload failed.\n', err) }
+                else { resolve(body) }
+            })
         })
     })
 }
 
-uploadFile3('1')
+uploadFile(1, 'others/Placeholder.pdf').then(function (r) {
+    console.log(r)
+})
+
 
 
 // def create_rosalie_user(idRosalie, nom, prenom, email, dateDeNaissance, telephone):
