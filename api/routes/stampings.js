@@ -2,7 +2,7 @@ var Stamping = require('../models/stamping')
 var Agent = require('../models/agent')
 var express = require('express')
 var router = express.Router()
-var otsManager = require('../utils/otsManager')
+var datatrustManager = require('../utils/datatrustManager')
 
 
 router.route('/')
@@ -96,7 +96,7 @@ router.route('/:namespace/:userId')
                         stamping.agentId = agent._id
                         stamping.userId = req.params.userId
                         stamping.fileName = req.body.fileName // TODO : Récupérer le vrai nom du fichier
-                        otsManager.stamp('README.md').then(function (r) {
+                        datatrustManager.stamp('README.md').then(function (r) {
                             if (r.success) {
                                 stamping.otsFile = r.otsFile
                                 stamping.save(function (err) {
@@ -105,8 +105,7 @@ router.route('/:namespace/:userId')
                                         res.json({
                                             message: 'Your stamping of ' + stamping.fileName
                                             + ' has been created with id ' + stamping._id
-                                            + ' by ' + agent.name,
-                                            otsResult: r.result
+                                            + ' by ' + agent.name
                                         })
                                     }
                                 })
@@ -146,11 +145,11 @@ router.route('/:namespace/:userId/verify')
                                 res.status(404).json({ message: 'No corresponding stamping was found.' })
                             }
                             else {
-                                otsManager.verify('README.md', stamping.otsFile).then(function (r) {
+                                datatrustManager.verify('README.md').then(function (r) {
                                     if (r.success) {
                                         res.json({
                                             message: 'Your stamping of ' + stamping.fileName  + ' is verified.',
-                                            otsResult: 'The result is : ' + r.result
+                                            result: 'The result is : ' + r.result
                                         })
                                     } else {
                                         res.json(r.error)
