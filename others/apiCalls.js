@@ -1,28 +1,53 @@
-const apiSecret = require('../config.js');
-const requestify = require('requestify');
+const apiSecret = require('../config.js')
+const requestify = require('requestify')
+const request = require('request')
+const fs = require('fs')
 
-const apiUrl = apiSecret.baseUrl + 'appli/rosalie/beneficiaire/';
+const apiUrl = apiSecret.baseUrl + 'appli/rosalie/beneficiaire/'
+
+// TODO : Homogénéiser pour n'utiliser que request (et plus requestify)
 
 function getRosalieUser(idRosalie) {
-    return apiSecret.getToken().then(function (value) {
-        var url = apiUrl + idRosalie;
-        var params = {
-            access_token: value
-        };
+    return apiSecret.getToken().then(function (resp) {
+        var url = apiUrl + idRosalie
+        var params = { access_token: resp }
 
-        return new Promise(resolve => {
-            requestify.get(url, {params: params})
-            .then(function(r) {
-                resolve(r.getBody());
-            })
-            .fail(function(err) {
-                resolve("Something happened:", err);
-            });
-    });
-    });
+        return new Promise(function (resolve) {
+            requestify.get(url, { params: params })
+                .then(function(r) {
+                    resolve(r.getBody())
+                })
+                .fail(function(err) {
+                    resolve("Something happened in getRosalieUser :", err.getBody(), err.getCode())
+                })
+        })
+    })
 }
 
-getRosalieUser('1').then(value => console.log(value));
+getRosalieUser('1').then(function (resp) {
+    console.log(resp)
+})
+
+function uploadFile3(idRosalie) {
+    return apiSecret.getToken().then(function (resp) {
+        var url = apiUrl + idRosalie.toString() + '/uploadFile'
+        var params = {
+            access_token: resp,
+            idRosalie: idRosalie
+        }
+        url += '?access_token=' + params.access_token + '&idRosalie=' + params.idRosalie
+        var formData = {
+            file: fs.createReadStream('others/Placeholder.pdf')
+        }
+
+        request.post({ url: url, formData: formData }, function optionalCallback(err, httpResponse, body) {
+            if (err) { return console.error('upload failed:', err) }
+            else { console.log('Upload successful!  Server responded with:', body) };
+        })
+    })
+}
+
+uploadFile3('1')
 
 
 // def create_rosalie_user(idRosalie, nom, prenom, email, dateDeNaissance, telephone):
@@ -40,12 +65,6 @@ getRosalieUser('1').then(value => console.log(value));
 // }
 // return requests.post(url, params=params, data=data).json()
 //
-// def get_rosalie_user(idRosalie):
-// url = API_URL + '/' + idRosalie
-// params = {
-//     'access_token': token
-// }
-// return requests.get(url, params=params).json()
 //
 // def edit_rosalie_user(idRosalie, **kwargs):
 // url = API_URL + '/' + idRosalie
