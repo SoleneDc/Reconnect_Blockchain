@@ -1,7 +1,7 @@
 const request = require('request')
 const fs = require('fs')
 
-const config = require('../config.js')
+const config = require('../../config.js').reconnect
 
 
 const apiUrl = config.baseUrl + 'appli/rosalie/beneficiaire/'
@@ -49,7 +49,6 @@ uploadFile(1, 'others/Placeholder.pdf').then(function (r) {
 })
 
 
-
 // def create_rosalie_user(idRosalie, nom, prenom, email, dateDeNaissance, telephone):
 // url = API_URL
 // params = {
@@ -64,7 +63,6 @@ uploadFile(1, 'others/Placeholder.pdf').then(function (r) {
 //     'telephone': telephone
 // }
 // return requests.post(url, params=params, data=data).json()
-//
 //
 // def edit_rosalie_user(idRosalie, **kwargs):
 // url = API_URL + '/' + idRosalie
@@ -82,17 +80,3 @@ uploadFile(1, 'others/Placeholder.pdf').then(function (r) {
 //     'idRosalie': idRosalie
 // }
 // return requests.delete(url, params=params)
-//
-// def upload_file(idRosalie, file): # Response 400
-// url = API_URL
-// params = {
-//     'access_token': token,
-//     'idRosalie': idRosalie
-// }
-// data = {
-//     'file': open(file, 'rb')
-// }
-// return requests.post(url, params=params, data=data)
-//
-// user = get_rosalie_user('1')
-// print(user)

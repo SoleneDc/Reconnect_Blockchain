@@ -3,7 +3,7 @@
 // ==================================================
 
 // Custom config
-const config = require('./config.js');
+const config = require('./config.js').mongodb;
 var port = config.PORT || 8080;        // set our port
 
 // Express
@@ -24,12 +24,10 @@ mongoose.connect(config.db_uri, { useMongoClient: true })
 // ==================================================
 
 // Imports
-var bears = require('./api/routes/bears')
 var stampings = require('./api/routes/stampings')
 var agents = require('./api/routes/agents')
 
 // Routes
-app.use('/api/bears', bears);
 app.use('/api/stampings', stampings);
 app.use('/api/agents', agents);
 
