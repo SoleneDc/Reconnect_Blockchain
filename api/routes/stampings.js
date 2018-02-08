@@ -2,7 +2,6 @@ var Stamping = require('../models/stamping')
 var Agent = require('../models/agent')
 var express = require('express')
 var router = express.Router()
-var otsManager = require('../utils/otsManager')
 var datatrustManager = require('../utils/datatrustManager')
 
 
