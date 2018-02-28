@@ -31,7 +31,6 @@ var stamp = function (file) {
         var hasher = crypto.createHash('sha256')
         fs.ReadStream(file).on('data', function (data) {
             var hash = hasher.update(data).digest('hex')
-            console.log(hash)
             var url = config.baseUrl + '/stamp'
             var qs = { api_key: config.api_key }
             var formData = { digest: hash }
