@@ -3,8 +3,9 @@ var Schema       = mongoose.Schema;
 
 
 var AgentSchema   = new Schema({
-    name: String,
-    namespace: String,
+    fullName: String,
+    shortName: String,
+    email: String,
     accountId: String,
     apiKey: String
 });

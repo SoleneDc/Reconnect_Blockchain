@@ -23,8 +23,7 @@ function createUser(email, password) {
     })
 }
 
-// createUser('manon@gmail.com','coucou').then(function (r){console.log(r)})
-
+// createUser('solene@gmail.com','coucou').then(function (r){console.log(r)})
 
 var stamp = function (file) {
     return new Promise(function (resolve) {
@@ -74,5 +73,8 @@ var verify = function (file) {
     })
 }
 
-module.exports.stamp = stamp
-module.exports.verify = verify
+module.exports = {
+    createUser: createUser,
+    stamp: stamp,
+    verify: verify
+}
