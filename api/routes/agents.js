@@ -6,9 +6,10 @@ var Agent = require('../models/agent')
 var dtManager = require('../utils/datatrustManager')
 var authManager = require('../utils/authManager')
 
-router.use(function (req, res, next) {
-    authManager.requireAuth(req, res, next)
-})
+// UNCOMMENT TO ENABLE FORCED AUTHENTICATION
+// router.use(function (req, res, next) {
+//     authManager.requireAuth(req, res, next)
+// })
 
 router.route('/')
     .get(function (req, res) {
