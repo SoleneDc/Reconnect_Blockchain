@@ -27,9 +27,8 @@ function createUser(email, password) {
 
 var stamp = function (file) {
     return new Promise(function (resolve) {
-        var hasher = crypto.createHash('sha256')
         fs.ReadStream(file).on('data', function (data) {
-            var hash = hasher.update(data).digest('hex')
+            var hash = crypto.createHash('sha256').update(data).digest('hex')
             var url = config.baseUrl + '/stamp'
             var qs = { api_key: config.api_key }
             var formData = { digest: hash }
@@ -43,9 +42,8 @@ var stamp = function (file) {
 
 var verify = function (file) {
     return new Promise(function (resolve) {
-        var hasher = crypto.createHash('sha256')
         fs.ReadStream(file).on('data', function (data) {
-            var hash = hasher.update(data).digest('hex')
+            var hash = crypto.createHash('sha256').update(data).digest('hex')
             var url = config.baseUrl + '/stamp'
             var qs = { api_key: config.api_key }
             var formData = { digest: hash }
