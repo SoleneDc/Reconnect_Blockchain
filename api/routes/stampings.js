@@ -1,4 +1,5 @@
 const fs = require('fs')
+const crypto = require('crypto')
 
 var express = require('express')
 var router = express.Router()
@@ -105,7 +106,7 @@ router.route('/:shortName/:userId/stamp')
                         stamping.fileName = req.file.originalname
                         dtManager.stamp(req.file.buffer).then(function (r) {
                             if (r.success) {
-                                stamping.HashFile = r.hash
+                                stamping.hashFile = r.hash
                                 console.log(stamping)
                                 stamping.save(function (err) {
                                     if (err) { res.status(err.statusCode || 500).json(err) }
@@ -146,7 +147,7 @@ router.route('/:shortName/:userId/verify')
                         Stamping.findOne({
                             agentId: agent._id,
                             userId: req.params.userId,
-                            fileName: req.file.originalname
+                            hashFile: crypto.createHash('sha256').update(req.file.buffer).digest('hex')
                         }, function (err, stamping) {
                             if (err) { res.status(err.statusCode || 500).json(err) }
                             else if (stamping === null) {
