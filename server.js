@@ -3,8 +3,8 @@
 // ==================================================
 
 // Custom config
-const config = require('./config.js').mongodb;
-var port = config.PORT || 8080;        // set our port
+const config   = require('./config.js');
+var port = config.mongodb.PORT || 8080;        // set our port
 
 // Express
 var express    = require('express');        // call express
@@ -17,20 +17,25 @@ app.use(bodyParser.json());
 
 // Mongoose
 var mongoose   = require('mongoose');
-mongoose.connect(config.db_uri, { useMongoClient: true })
+mongoose.connect(config.mongodb.db_uri, { useMongoClient: true })
+
+// Helmet
+var helmet     = require('helmet');
+app.use(helmet());
 
 // ==================================================
 // ROUTER CONFIG
 // ==================================================
 
 // Imports
-var stampings = require('./api/routes/stampings')
-var agents = require('./api/routes/agents')
+var auth       = require('./api/routes/auth')
+var stampings  = require('./api/routes/stampings')
+var agents     = require('./api/routes/agents')
 
 // Routes
-app.use('/api/stampings', stampings);
-app.use('/api/agents', agents);
-
+app.use('/api/auth', auth)
+app.use('/api/stampings', stampings)
+app.use('/api/agents', agents)
 
 // ==================================================
 // START THE SERVER

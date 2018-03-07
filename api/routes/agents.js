@@ -1,9 +1,14 @@
+var crypto = require('crypto')
 var express = require('express')
 var router = express.Router()
 
 var Agent = require('../models/agent')
 var dtManager = require('../utils/datatrustManager')
+var authManager = require('../utils/authManager')
 
+router.use(function (req, res, next) {
+    authManager.requireAuth(req, res, next)
+})
 
 router.route('/')
     .get(function (req, res) {
@@ -21,6 +26,7 @@ router.route('/')
             agent.fullName = req.body.fullName
             agent.shortName = req.body.shortName
             agent.email = req.body.email
+            agent.pwdHash = crypto.createHash('sha256').update(req.body.password).digest('hex')
             dtManager.createUser(req.body.email, req.body.password).then(function (r) {
                 if (r.api_key) {
                     agent.apiKey = r.api_key

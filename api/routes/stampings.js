@@ -9,7 +9,12 @@ var mult = multer({ dest: 'uploads/' })
 var Stamping = require('../models/stamping')
 var Agent = require('../models/agent')
 var dtManager = require('../utils/datatrustManager')
+var authManager = require('../utils/authManager')
 
+
+router.use(function (req, res, next) {
+    authManager.requireAuth(req, res, next)
+})
 
 router.route('/')
     .get(function (req, res) {

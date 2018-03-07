@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const fs = require('fs')
 const request = require('request')
 
-const config = require('../../config.js').datatrust
+const config = require('../../config').datatrust
 const apiUrl = config.baseUrl
 
 
