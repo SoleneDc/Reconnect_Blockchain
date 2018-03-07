@@ -27,18 +27,41 @@ function createUser(email, password) {
 
 var stamp = function (file) {
     return new Promise(function (resolve) {
-        fs.ReadStream(file).on('data', function (data) {
-            var hash = crypto.createHash('sha256').update(data).digest('hex')
-            var url = config.baseUrl + '/stamp'
-            var qs = { api_key: config.api_key }
-            var formData = { digest: hash }
-            request.post({ url: url, qs: qs, formData: formData, json: true }, function (err) {
-                if (err) { resolve({ success: false, error: err }) }
-                else { resolve({ success: true }) }
-            })
+        var rs = fs.ReadStream(file)
+        rs.on('readable', function () {
+            var buffer = rs.read()
+            if (buffer != null) {
+                console.log(buffer)
+                var hash = crypto.createHash('sha256').update(buffer).digest('hex')
+                var url = config.baseUrl + '/stamp'
+                var qs = { api_key: config.api_key }
+                var formData = { digest: hash }
+                request.post({ url: url, qs: qs, formData: formData, json: true }, function (err) {
+                    if (err) { resolve({ success: false, error: err }) }
+                    else { resolve({ success: true, hash: hash }) }
+                })
+            }
         })
     })
 }
+
+// var stamp = function (file) {
+//     return new Promise(function (resolve) {
+//         fs.ReadStream(file).on('data', function (data) {
+//             var buffer = fs.ReadStream(file).on('readable')
+//             var hasher = crypto.createHash('sha256')
+//             var hash = hasher.update(data).digest('hex')
+//             var url = config.baseUrl + '/stamp'
+//             var qs = { api_key: config.api_key }
+//             var formData = { digest: hash }
+//             request.post({ url: url, qs: qs, formData: formData, json: true }, function (err) {
+//                 if (err) { resolve({ success: false, error: err }) }
+//                 else { resolve({ success: true , hash: hash}) }
+//                 // else { resolve({ success: true }) }
+//             })
+//         })
+//     })
+// }
 
 var verify = function (file) {
     return new Promise(function (resolve) {

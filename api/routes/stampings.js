@@ -104,6 +104,8 @@ router.route('/:shortName/:userId/stamp')
                         stamping.fileName = req.file.originalname
                         dtManager.stamp(req.file.path).then(function (r) {
                             if (r.success) {
+                                stamping.HashFile = r.hash
+                                console.log(stamping)
                                 stamping.save(function (err) {
                                     if (err) { res.status(err.statusCode || 500).json(err) }
                                     else {
