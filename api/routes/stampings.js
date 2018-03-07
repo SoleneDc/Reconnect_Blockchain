@@ -1,5 +1,4 @@
-var Stamping = require('../models/stamping')
-var Agent = require('../models/agent')
+const fs = require('fs')
 
 var express = require('express')
 var router = express.Router()
@@ -7,8 +6,9 @@ var router = express.Router()
 var multer  = require('multer')
 var mult = multer({ dest: 'uploads/' })
 
-var datatrustManager = require('../utils/datatrustManager')
-const fs = require('fs')
+var Stamping = require('../models/stamping')
+var Agent = require('../models/agent')
+var dtManager = require('../utils/datatrustManager')
 
 
 router.route('/')
@@ -87,12 +87,12 @@ router.route('/:namespace/:userId/:fileName')
     })
 
 
-router.route('/:namespace/:userId/stamp')
+router.route('/:shortName/:userId/stamp')
     .post(mult.single('file'), function (req, res) {
         var stamping = new Stamping()
         if (req.file) {
             Agent.findOne(
-                { namespace: req.params.namespace },
+                { shortName: req.params.shortName },
                 function (err, agent) {
                     if (err) { res.status(err.statusCode || 500).json(err) }
                     else if (agent === null) {
@@ -102,7 +102,7 @@ router.route('/:namespace/:userId/stamp')
                         stamping.agentId = agent._id
                         stamping.userId = req.params.userId
                         stamping.fileName = req.file.originalname
-                        datatrustManager.stamp(req.file.path).then(function (r) {
+                        dtManager.stamp(req.file.path).then(function (r) {
                             if (r.success) {
                                 stamping.save(function (err) {
                                     if (err) { res.status(err.statusCode || 500).json(err) }
@@ -110,7 +110,7 @@ router.route('/:namespace/:userId/stamp')
                                         res.json({
                                             message: 'Your stamping of ' + stamping.fileName
                                             + ' has been created with id ' + stamping._id
-                                            + ' by ' + agent.name
+                                            + ' by ' + agent.fullName
                                         })
                                     }
                                 })
@@ -133,11 +133,11 @@ router.route('/:namespace/:userId/stamp')
     })
 
 
-router.route('/:namespace/:userId/verify')
+router.route('/:shortName/:userId/verify')
     .post(mult.single('file'), function (req, res) {
         if (req.file) {
             Agent.findOne(
-                { namespace: req.params.namespace },
+                { shortName: req.params.shortName },
                 function (err, agent) {
                     if (err) { res.status(err.statusCode || 500).json(err) }
                     else if (agent === null) {
@@ -154,7 +154,7 @@ router.route('/:namespace/:userId/verify')
                                 res.status(404).json({ message: 'No corresponding stamping was found.' })
                             }
                             else {
-                                datatrustManager.verify(req.file.path).then(function (r) {
+                                dtManager.verify(req.file.path).then(function (r) {
                                     if (r.success) {
                                         res.json({
                                             message: 'Your stamping of ' + stamping.fileName  + ' is verified.',

@@ -1,6 +1,8 @@
-var Agent = require('../models/agent');
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
+
+var Agent = require('../models/agent')
+var dtManager = require('../utils/datatrustManager')
 
 
 router.route('/')
@@ -14,19 +16,40 @@ router.route('/')
             })
     })
     .post(function (req, res) {
-        if (req.body.name && req.body.namespace) {
+        if (req.body.fullName && req.body.shortName && req.body.email && req.body.password) {
             var agent = new Agent()
-            agent.name = req.body.name
-            agent.namespace = req.body.namespace
-            agent.save(function (err) {
-                if (err) { res.status(err.statusCode || 500).json(err) } else {
-                    res.json({ message: 'Your agent ' + agent.name + ' has been created with id ' + agent._id +'!' })
+            agent.fullName = req.body.fullName
+            agent.shortName = req.body.shortName
+            agent.email = req.body.email
+            dtManager.createUser(req.body.email, req.body.password).then(function (r) {
+                if (r.api_key) {
+                    agent.apiKey = r.api_key
+                    // TODO : Deal with accountId, when does it appear?
+                    agent.save(function (err) {
+                        if (err) { res.status(err.statusCode || 500).json(err) } else {
+                            res.json({ message: 'Your agent ' + agent.fullName + ' has been successfully created with short name ' + agent.shortName +'.' })
+                        }
+                    })
+                }
+                else {
+                    res.json({ err: r.error })
                 }
             })
         }
         else {
-            res.json({ message: 'You have to provide a name and a namespace.' })
+            res.json({ message: 'You have to provide a fullName, a shortName, an email and a password.' })
         }
+    })
+    .delete(function (req, res) {
+        Agent.remove(
+            {},
+            function (err) {
+                if (err) { res.status(err.statusCode || 500).json(err) }
+                else {
+                    res.json({ message: 'All agents deleted!' })
+                }
+            }
+        )
     })
 
 
