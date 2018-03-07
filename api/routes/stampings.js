@@ -4,7 +4,8 @@ var express = require('express')
 var router = express.Router()
 
 var multer  = require('multer')
-var mult = multer({ dest: 'uploads/' })
+var storage = multer.memoryStorage()
+var mult = multer({ storage: storage })
 
 var Stamping = require('../models/stamping')
 var Agent = require('../models/agent')
@@ -107,8 +108,10 @@ router.route('/:shortName/:userId/stamp')
                         stamping.agentId = agent._id
                         stamping.userId = req.params.userId
                         stamping.fileName = req.file.originalname
-                        dtManager.stamp(req.file.path).then(function (r) {
+                        dtManager.stamp(req.file.buffer).then(function (r) {
                             if (r.success) {
+                                stamping.HashFile = r.hash
+                                console.log(stamping)
                                 stamping.save(function (err) {
                                     if (err) { res.status(err.statusCode || 500).json(err) }
                                     else {
@@ -123,10 +126,6 @@ router.route('/:shortName/:userId/stamp')
                             else {
                                 res.json(r.error)
                             }
-                            fs.unlink(req.file.path, function (err) {
-                                if (err) { console.log(err) }
-                                else { console.log('Successfully deleted '+req.file.path) }
-                            })
                         })
                     }
                 })
@@ -159,7 +158,7 @@ router.route('/:shortName/:userId/verify')
                                 res.status(404).json({ message: 'No corresponding stamping was found.' })
                             }
                             else {
-                                dtManager.verify(req.file.path).then(function (r) {
+                                dtManager.verify(req.file.buffer).then(function (r) {
                                     if (r.success) {
                                         res.json({
                                             message: 'Your stamping of ' + stamping.fileName  + ' is verified.',
