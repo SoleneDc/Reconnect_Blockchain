@@ -4,6 +4,7 @@ const request = require('request')
 
 const config = require('../../config').datatrust
 const apiUrl = config.baseUrl
+const agent = require('../models/agent.js')
 
 
 function createUser(email, password) {
@@ -23,11 +24,11 @@ function createUser(email, password) {
     })
 }
 
-var stamp = function (buffer) {
+var stamp = function (buffer, agent) {
     return new Promise(function (resolve) {
         var hash = crypto.createHash('sha256').update(buffer).digest('hex')
         var url = config.baseUrl + '/stamp'
-        var qs = { api_key: config.api_key }
+        var qs = { api_key: agent.api_key }
         var formData = { digest: hash }
         request.post({ url: url, qs: qs, formData: formData, json: true }, function (err) {
             if (err) { resolve({ success: false, error: err }) }
@@ -36,11 +37,11 @@ var stamp = function (buffer) {
     })
 }
 
-var verify = function (buffer) {
+var verify = function (buffer, agent) {
     return new Promise(function (resolve) {
         var hash = crypto.createHash('sha256').update(buffer).digest('hex')
         var url = config.baseUrl + '/stamp'
-        var qs = { api_key: config.api_key }
+        var qs = { api_key: agent.api_key }
         var formData = { digest: hash }
         request.get({ url: url, qs: qs, formData: formData, json: true }, function (err, resp, body) {
             if (err) { resolve({ success: false, error: err }) }

@@ -108,7 +108,7 @@ router.route('/:shortName/:userId/stamp')
                         stamping.agentId = agent._id
                         stamping.userId = req.params.userId
                         stamping.fileName = req.file.originalname
-                        dtManager.stamp(req.file.buffer).then(function (r) {
+                        dtManager.stamp(req.file.buffer, agent).then(function (r) {
                             if (r.success) {
                                 stamping.HashFile = r.hash
                                 console.log(stamping)
@@ -158,7 +158,7 @@ router.route('/:shortName/:userId/verify')
                                 res.status(404).json({ message: 'No corresponding stamping was found.' })
                             }
                             else {
-                                dtManager.verify(req.file.buffer).then(function (r) {
+                                dtManager.verify(req.file.buffer, agent).then(function (r) {
                                     if (r.success) {
                                         res.json({
                                             message: 'Your stamping of ' + stamping.fileName  + ' is verified.',
