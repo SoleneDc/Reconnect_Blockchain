@@ -41,7 +41,7 @@ router.route('/')
     })
 
 
-router.route('/:namespace/:userId/:fileName')
+router.route('/:shortName/:userId/:fileName')
     .get(function (req, res) {
         Agent.findOne(
             { namespace: req.params.namespace },
