@@ -28,7 +28,6 @@ var stamp = function (buffer, agent) {
     return new Promise(function (resolve) {
         var hash = crypto.createHash('sha256').update(buffer).digest('hex')
         var url = config.baseUrl + '/stamp'
-        console.log(agent)
         var qs = { api_key: agent.apiKey }
         var formData = { digest: hash }
         request.post({ url: url, qs: qs, formData: formData, json: true }, function (err) {
