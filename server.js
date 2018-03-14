@@ -15,10 +15,6 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Mongoose
-var mongoose   = require('mongoose');
-mongoose.connect(config.mongodb.db_uri, { useMongoClient: true })
-
 // Helmet
 var helmet     = require('helmet');
 app.use(helmet());
@@ -38,8 +34,17 @@ app.use('/api/stampings', stampings)
 app.use('/api/agents', agents)
 
 // ==================================================
-// START THE SERVER
+// CONNECT DB AND START THE SERVER
 // ==================================================
 
-app.listen(port);
-console.log('Magic happens on port ' + port);
+// Mongoose
+var mongoose   = require('mongoose');
+mongoose.connect(config.mongodb.db_uri, { useMongoClient: true })
+var db = mongoose.connection;
+
+// Start server
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', function() {
+	app.listen(port);
+	console.log('Magic happens on port ' + port);
+});
