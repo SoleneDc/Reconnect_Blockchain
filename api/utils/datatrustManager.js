@@ -28,7 +28,8 @@ var stamp = function (buffer, agent) {
     return new Promise(function (resolve) {
         var hash = crypto.createHash('sha256').update(buffer).digest('hex')
         var url = config.baseUrl + '/stamp'
-        var qs = { api_key: agent.api_key }
+        console.log(agent)
+        var qs = { api_key: agent.apiKey }
         var formData = { digest: hash }
         request.post({ url: url, qs: qs, formData: formData, json: true }, function (err) {
             if (err) { resolve({ success: false, error: err }) }
@@ -41,7 +42,7 @@ var verify = function (buffer, agent) {
     return new Promise(function (resolve) {
         var hash = crypto.createHash('sha256').update(buffer).digest('hex')
         var url = config.baseUrl + '/stamp'
-        var qs = { api_key: agent.api_key }
+        var qs = { api_key: agent.apiKey }
         var formData = { digest: hash }
         request.get({ url: url, qs: qs, formData: formData, json: true }, function (err, resp, body) {
             if (err) { resolve({ success: false, error: err }) }
@@ -57,7 +58,7 @@ var verify = function (buffer, agent) {
                 //         else if (agent === null) {
                 //             resolve({success: false, error: 'No corresponding agent was found.'})
                 //         }
-                //         else if (agent.apiKey === qs.api_key) {
+                //         else if (agent.apiKey === qs.apiKey) {
                 //             resolve({ success: true, result: body.array[0].status })
                 //         }
                 //     })
