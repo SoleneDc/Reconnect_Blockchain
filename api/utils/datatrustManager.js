@@ -57,7 +57,7 @@ var verify = function (buffer, agent) {
                 //         else if (agent === null) {
                 //             resolve({success: false, error: 'No corresponding agent was found.'})
                 //         }
-                //         else if (agent.apiKey === qs.apiKey) {
+                //         else if (agent.apiKey === qs.api_key) {
                 //             resolve({ success: true, result: body.array[0].status })
                 //         }
                 //     })
