@@ -111,10 +111,8 @@ router.route('/:shortName/:userId/stamp')
                                 userId: req.params.userId,
                                 hashFile: crypto.createHash('sha256').update(req.file.buffer).digest('hex')},
                             function (err, stamping) {
-                                if (stamping != null) {
-                                    res.status(400).json({ message: 'Your document has already been stamped.' })
-                                }
-                                else if (stamping == null) {
+                                if (err) { res.status(err.statusCode || 500).json(err) }
+                                else if (stamping === null) {
                                     var stamping = new Stamping()
                                     stamping.agentId = agent._id
                                     stamping.userId = req.params.userId
@@ -140,6 +138,7 @@ router.route('/:shortName/:userId/stamp')
                                         }
                                     })
                                 }
+                                else { res.status(400).json({ message: 'Your document has already been stamped.' }) }
                             }
                         )}
                 })
