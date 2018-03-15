@@ -20,9 +20,8 @@ router.route('/')
                     if (agent.pwdHash != pwdHash) {
                         res.json({ success: false, message: 'Authentication failed. Wrong password.' })
                     } else {
-                        var token = jwt.sign({ agent: agent.shortName }, config.secret)
-                        res.json({ success: true, message: 'Authentication successful!', token: token })*
-                        console.log('token :', token)
+                        var token = jwt.sign({ agent: agent.shortName }, config.secret, {expiresIn: "2 days"})
+                        res.json({ success: true, message: 'Authentication successful!', token: token })
                     }
                 }
             })
