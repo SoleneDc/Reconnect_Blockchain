@@ -106,29 +106,41 @@ router.route('/:shortName/:userId/stamp')
                         res.status(400).json({ message: 'No corresponding agent was found.' })
                     }
                     else {
-                        stamping.agentId = agent._id
-                        stamping.userId = req.params.userId
-                        stamping.fileName = req.file.originalname
-                        dtManager.stamp(req.file.buffer, agent).then(function (r) {
-                            if (r.success) {
-                                stamping.hashFile = r.hash
-                                console.log(stamping)
-                                stamping.save(function (err) {
-                                    if (err) { res.status(err.statusCode || 500).json(err) }
-                                    else {
-                                        res.json({
-                                            message: 'Your stamping of ' + stamping.fileName
-                                            + ' has been created with id ' + stamping._id
-                                            + ' by ' + agent.fullName
-                                        })
-                                    }
-                                })
+                        Stamping.findOne({
+                                agentId: agent._id,
+                                userId: req.params.userId,
+                                hashFile: crypto.createHash('sha256').update(req.file.buffer).digest('hex')},
+                            function (err, stamping) {
+                                if (err) { res.status(err.statusCode || 500).json(err) }
+                                else if (stamping === null) {
+                                    var stamping = new Stamping()
+                                    stamping.agentId = agent._id
+                                    stamping.userId = req.params.userId
+                                    stamping.fileName = req.file.originalname
+                                    dtManager.stamp(req.file.buffer, agent).then(function (r) {
+                                        if (r.success) {
+                                            stamping.hashFile = r.hash
+                                            stamping.save(function (err) {
+                                                if (err) {
+                                                    res.status(err.statusCode || 500).json(err)
+                                                }
+                                                else {
+                                                    res.json({
+                                                        message: 'Your stamping of ' + stamping.fileName
+                                                        + ' has been created with id ' + stamping._id
+                                                        + ' by ' + agent.fullName
+                                                    })
+                                                }
+                                            })
+                                        }
+                                        else {
+                                            res.json(r.error)
+                                        }
+                                    })
+                                }
+                                else { res.status(400).json({ message: 'Your document has already been stamped.' }) }
                             }
-                            else {
-                                res.json(r.error)
-                            }
-                        })
-                    }
+                        )}
                 })
         }
         else {
@@ -136,7 +148,6 @@ router.route('/:shortName/:userId/stamp')
             // TODO : Améliorer cette gestion d'exception, notamment si le fichier n'est pas au bon format
         }
     })
-
 
 router.route('/:shortName/:userId/verify')
     .post(mult.single('file'), function (req, res) {
