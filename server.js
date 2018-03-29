@@ -4,7 +4,7 @@
 
 // Custom config
 const config   = require('./config.js');
-var port = config.mongodb.PORT || 8080;        // set our port
+var port = config.mongodb.PORT || 8080;     // set our port
 
 // Express
 var express    = require('express');        // call express
@@ -24,13 +24,15 @@ app.use(helmet());
 // ==================================================
 
 // Imports
-var auth       = require('./api/routes/auth')
-var stampings  = require('./api/routes/stampings')
-var agents     = require('./api/routes/agents')
+var auth            = require('./api/routes/auth')
+var stampings       = require('./api/routes/stampings')
+var my_stampings    = require('./api/routes/my_stampings')
+var agents          = require('./api/routes/agents')
 
 // Routes
 app.use('/api/auth', auth)
 app.use('/api/stampings', stampings)
+app.use('/api/my_stampings', my_stampings)
 app.use('/api/agents', agents)
 
 // ==================================================

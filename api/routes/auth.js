@@ -14,13 +14,13 @@ router.route('/')
                 shortName: req.body.shortName
             }, function (err, agent) {
                 if (err) { res.json({ success: false, error: err }) }
-                else if (agent == null) { res.json({ success: false, message: 'Authentication failed. Agent not found.' }) }
+                else if (agent === null) { res.json({ success: false, message: 'Authentication failed. Agent not found.' }) }
                 else {
                     var pwdHash = crypto.createHash('sha256').update(req.body.password).digest('hex')
                     if (agent.pwdHash != pwdHash) {
                         res.json({ success: false, message: 'Authentication failed. Wrong password.' })
                     } else {
-                        var token = jwt.sign(agent.shortName, config.secret)
+                        var token = jwt.sign({ agent: agent.shortName }, config.secret, {expiresIn: "2 days"})
                         res.json({ success: true, message: 'Authentication successful!', token: token })
                     }
                 }

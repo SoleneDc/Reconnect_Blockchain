@@ -24,6 +24,6 @@
     "mongodb": "^3.0.4",
     "mongoose": "^4.13.12",
     "multer": "^1.3.0",
-    "requestify": "^0.2.5"
+    "request": "^2.85.0"
   }
 }

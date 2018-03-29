@@ -47,20 +47,6 @@ var verify = function (buffer, agent) {
             if (err) { resolve({ success: false, error: err }) }
             else {
                 resolve({ success: true, result: body[0].status })
-
-                // === A ré-activer quand la carte 49 sera effectuée ===
-                //
-                // Agent.findOne(
-                //     { accountId: body[0].account_id },
-                //     function (err, agent) {
-                //         if (err) { resolve({ success: false, error: err }) }
-                //         else if (agent === null) {
-                //             resolve({success: false, error: 'No corresponding agent was found.'})
-                //         }
-                //         else if (agent.apiKey === qs.api_key) {
-                //             resolve({ success: true, result: body.array[0].status })
-                //         }
-                //     })
             }
         })
     })
