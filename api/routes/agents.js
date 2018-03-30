@@ -29,9 +29,11 @@ router.route('/')
             agent.email = req.body.email
             agent.pwdHash = crypto.createHash('sha256').update(req.body.password).digest('hex')
             dtManager.createUser(req.body.email, req.body.password).then(function (r) {
+                if (r.message) {
+                    res.json({ message: r.message })
+                }
                 if (r.api_key) {
                     agent.apiKey = r.api_key
-                    // TODO : Deal with accountId, when does it appear?
                     agent.save(function (err) {
                         if (err) { res.status(err.statusCode || 500).json(err) } else {
                             res.json({ message: 'Your agent ' + agent.fullName + ' has been successfully created with short name ' + agent.shortName +'.' })
