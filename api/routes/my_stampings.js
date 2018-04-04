@@ -15,6 +15,30 @@ router.use(function (req, res, next) {
     authManager.requireAgentAuth(req, res, next)
 })
 
+router.route('/:shortName')
+    .get(function (req, res) {
+        authManager.checkAgent(req, res, function (req, res) {
+            Agent.findOne(
+                { shortName: req.params.shortName },
+                function (err, agent) {
+                    if (err) { res.status(err.statusCode || 500).json(err) }
+                    else if (agent === null) {
+                        res.status(404).json({ message: 'No corresponding agent was found.' })
+                    }
+                    else {
+                        Stamping.find(
+                            { agentId: agent._id },
+                            function (err, stampings) {
+                                if (err) { res.status(err.statusCode || 500).json(err) }
+                                else { res.json(stampings) }
+                            }
+                        )
+                    }
+                }
+            )
+        })
+    })
+
 router.route('/:shortName/:userId/:fileName')
     .get(function (req, res) {
         authManager.checkAgent(req, res, function (req, res) {
@@ -35,9 +59,7 @@ router.route('/:shortName/:userId/:fileName')
                             else if (stamping === null) {
                                 res.status(404).json({ message: 'No corresponding stamping was found.' })
                             }
-                            else {
-                                res.json(stamping)
-                            }
+                            else { res.json(stamping) }
                         })
                     }
                 })   
@@ -111,9 +133,7 @@ router.route('/:shortName/:userId/stamp')
                                                     }
                                                 })
                                             }
-                                            else {
-                                                res.json(r.error)
-                                            }
+                                            else { res.json(r.error) }
                                         })
                                     }
                                     else { res.status(400).json({ message: 'Your document has already been stamped.' }) }
@@ -123,7 +143,6 @@ router.route('/:shortName/:userId/stamp')
             }
             else {
                 res.status(400).json({ message: 'You have to provide a file.' })
-                // TODO : Améliorer cette gestion d'exception, notamment si le fichier n'est pas au bon format
             }
         })
     })
@@ -157,9 +176,7 @@ router.route('/:shortName/:userId/verify')
                                                 message: 'Your stamping of ' + stamping.fileName  + ' is verified.',
                                                 result: 'The result is : ' + r.result
                                             })
-                                        } else {
-                                            res.json(r.error)
-                                        }
+                                        } else { res.json(r.error) }
                                     })
                                 }
                             })
@@ -167,7 +184,6 @@ router.route('/:shortName/:userId/verify')
                     })
             } else {
                 res.status(400).json({ message: 'You have to provide a file. '})
-                // TODO : Améliorer cette gestion d'exception, notamment si le fichier n'est pas au bon format
             }
         })
     })

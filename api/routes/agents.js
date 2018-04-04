@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 
 var Agent = require('../models/agent')
+var Stamping = require('../models/stamping')
 var dtManager = require('../utils/datatrustManager')
 var authManager = require('../utils/authManager')
 
@@ -63,7 +64,8 @@ router.route('/')
 router.route('/:agentId')
     .put(function (req, res) {
         if (req.body.shortName && req.body.fullName && req.body.password && req.body.email) {
-            // TODO : Vérifier que le mail n'existe pas déjà
+            // TODO : Vérifier que le mail & le shortName n'existent pas déjà
+            // TODO : Si le mail change, modifier aussi sur Datatrust
             Agent.update(
                 { _id: req.params.agentId },
                 {
@@ -89,11 +91,18 @@ router.route('/:agentId')
             function (err, r) {
                 if (err) { res.status(err.statusCode || 500).json(err) }
                 else {
-                    res.json({ message: 'Agent deleted!' })
+                    Stamping.remove(
+                        { agentId: req.params.agentId },
+                        function (err) {
+                            if (err) { res.status(err.statusCode || 500).json(err) }
+                            else {
+                                res.json({ message: 'Agent deleted!' })
+                            }
+                        }
+                    )
                 }
             }
         )
-        // TODO : Supprimer les stampings associés aussi
     })
 
 module.exports = router
