@@ -9,6 +9,7 @@ var Stamping = require('../models/stamping')
 var Agent = require('../models/agent')
 var dtManager = require('../utils/datatrustManager')
 var authManager = require('../utils/authManager')
+var helpers = require('../utils/helpers')
 
 
 router.use(function (req, res, next) {
@@ -109,7 +110,7 @@ router.route('/:shortName/:userId/stamp')
                             Stamping.findOne({
                                     agentId: agent._id,
                                     userId: req.params.userId,
-                                    hashFile: authManager.hash(req.file.buffer)
+                                    hashFile: helpers.hash(req.file.buffer)
                                 }, function (err, stamping) {
                                     if (err) { res.status(err.statusCode || 500).json(err) }
                                     else if (stamping === null) {
@@ -163,7 +164,7 @@ router.route('/:shortName/:userId/verify')
                             Stamping.findOne({
                                 agentId: agent._id,
                                 userId: req.params.userId,
-                                hashFile: authManager.hash(req.file.buffer)
+                                hashFile: helpers.hash(req.file.buffer)
                             }, function (err, stamping) {
                                 if (err) { res.status(err.statusCode || 500).json(err) }
                                 else if (stamping === null) {

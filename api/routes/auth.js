@@ -3,6 +3,7 @@ var jwt = require('jsonwebtoken')
 
 var Agent = require('../models/agent')
 var authManager = require('../utils/authManager')
+var helpers = require('../utils/helpers')
 var config = require('../../config')
 
 var router = express.Router()
@@ -16,7 +17,7 @@ router.route('/')
                 if (err) { res.json({ success: false, error: err }) }
                 else if (agent === null) { res.json({ success: false, message: 'Authentication failed. Agent not found.' }) }
                 else {
-                    var pwdHash = authManager.hash(req.body.password)
+                    var pwdHash = helpers.hash(req.body.password)
                     if (agent.pwdHash != pwdHash) {
                         res.json({ success: false, message: 'Authentication failed. Wrong password.' })
                     } else {

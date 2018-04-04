@@ -1,5 +1,4 @@
 var jwt = require('jsonwebtoken')
-var crypto = require('crypto')
 
 var config = require('../../config')
 
@@ -19,10 +18,6 @@ var checkAgent = function (req, res, callback) {
     } else {
         res.status(403).json({ message: 'You are not allowed to access this content. Only the right agent is.' })
     }
-}
-
-var hash = function (toHash) {
-    return crypto.createHash('sha256').update(toHash).digest('hex')
 }
 
 // Callbacks
@@ -70,5 +65,4 @@ module.exports = {
     requireReconnectAuth: requireReconnectAuth,
     requireAgentAuth: requireAgentAuth,
     checkAgent: checkAgent,
-    hash: hash
 }
