@@ -6,7 +6,10 @@ Requirements :
 - installer Nodejs, version 6.11.4
 - installer MongoDB, version 3.2.11
 
-Ensuite, cloner le repositery en local.
+Ensuite, cloner le repositery en local :
+```
+git clone https://github.com/SoleneDc/Reconnect_Blockchain.git
+```
 
 Pour installer les modules nécessaire :
 ```
