@@ -7,7 +7,7 @@ const agent = require('../models/agent.js')
 const authManager = require('../utils/authManager')
 const helpers = require('../utils/helpers')
 
-
+// Create a new Agent on Datatrust
 function createUser(email, password) {
     return new Promise(function (resolve) {
         var url = apiUrl + '/user'
@@ -23,6 +23,7 @@ function createUser(email, password) {
     })
 }
 
+// Edit user email on Datatrust for a given agent
 function editUserEmail(email, agent) {
     return new Promise(function (resolve) {
         var url = apiUrl + '/user/email'
@@ -36,6 +37,7 @@ function editUserEmail(email, agent) {
     })
 }
 
+// Edit user password on Datatrust for a given agent
 function editUserPwd(password, agent) {
     return new Promise(function (resolve) {
         var url = apiUrl + '/user/password'
@@ -49,6 +51,7 @@ function editUserPwd(password, agent) {
     })
 }
 
+// Create a new stamping on Datatrust
 var stamp = function (buffer, agent) {
     return new Promise(function (resolve) {
         var url = config.baseUrl + '/stamp'
@@ -61,6 +64,7 @@ var stamp = function (buffer, agent) {
     })
 }
 
+// Use the Datatrust service to verify if a file is stamped on the blockchain.
 var verify = function (buffer, agent) {
     return new Promise(function (resolve) {
         var url = config.baseUrl + '/stamp'

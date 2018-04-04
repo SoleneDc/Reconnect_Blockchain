@@ -10,6 +10,7 @@ router.use(function (req, res, next) {
 })
 
 router.route('/')
+    // Get all the stampings in our DB
     .get(function (req, res) {
         Stamping.find(
             {},
@@ -19,6 +20,7 @@ router.route('/')
                 }
             })
     })
+    // Delete all the stampings in our DB
     .delete(function (req, res) {
         Stamping.remove(
             {},

@@ -2,12 +2,14 @@ var jwt = require('jsonwebtoken')
 
 var config = require('../../config')
 
+// File with the functions which check if someone has the rights to do what he wants to
 
-// Functions to export
+// Functions to export, check if someone is registered in our DB
 var requireAgentAuth = function (req, res, next) {
     return requireAuth(req, res, next, agentCallback)
 }
 
+// Check if someone is registered in the Reconnect DB
 var requireReconnectAuth = function (req, res, next) {
     return requireAuth(req, res, next, reconnectCallback)
 }
@@ -21,6 +23,7 @@ var checkAgent = function (req, res, callback) {
 }
 
 // Callbacks
+// For Reconnect
 var reconnectCallback = function (req, res, next) {
     if (req.decoded.agent === 'RECONNECT') {
         return next()
@@ -30,6 +33,7 @@ var reconnectCallback = function (req, res, next) {
     }
 }
 
+// For our DB
 var agentCallback = function (req, res, next) {
     if (req.decoded.agent) {
         return next()
@@ -38,7 +42,7 @@ var agentCallback = function (req, res, next) {
     }
 }
 
-// Base function
+// Base function, to check if an agent is authenticated, with Reconnect and our service
 var requireAuth = function (req, res, next, callback) {
     var token = req.body.token || req.query.token || req.headers['x-access-token']
     if (token) {

@@ -24,6 +24,8 @@ getRosalieUser(1).then(function (r) {
     console.log(r)
 })
 
+// Upload a file from the Reconnect website
+// For our service, it's the Certificat d'hébergement, which is saved on Reconnect DB
 function uploadFile(idRosalie, input_file) {
     return config.getToken().then(function (r) {
         var url = apiUrl + idRosalie.toString() + '/uploadFile'
