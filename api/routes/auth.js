@@ -9,6 +9,8 @@ var config = require('../../config')
 var router = express.Router()
 
 router.route('/')
+
+// To allow an agent to authenticate. Return a success or not if anything goes wrong
     .post(function (req, res) {
         if (req.body.shortName && req.body.password) {
             Agent.findOne({

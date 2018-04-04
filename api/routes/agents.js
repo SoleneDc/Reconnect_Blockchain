@@ -13,6 +13,8 @@ router.use(function (req, res, next) {
 })
 
 router.route('/')
+
+// To get all the information concerning all the existing agents
     .get(function (req, res) {
         Agent.find(
             {},
@@ -22,6 +24,8 @@ router.route('/')
                 }
             })
     })
+
+// To create an agent    
     .post(function (req, res) {
         if (req.body.fullName && req.body.shortName && req.body.email && req.body.password) {
             helpers.uniqueAgent(req.body.shortName, req.body.email, Agent()).then(function (r) {
@@ -56,6 +60,8 @@ router.route('/')
             res.json({ message: 'You have to provide a fullName, a shortName, an email and a password.' })
         }
     })
+
+// To delete all the existing agents
     .delete(function (req, res) {
         Agent.remove(
             {},

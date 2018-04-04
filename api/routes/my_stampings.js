@@ -16,6 +16,7 @@ router.use(function (req, res, next) {
     authManager.requireAgentAuth(req, res, next)
 })
 
+// To get all stampings for a given agent
 router.route('/:shortName')
     .get(function (req, res) {
         authManager.checkAgent(req, res, function (req, res) {
@@ -41,8 +42,10 @@ router.route('/:shortName')
     })
 
 router.route('/:shortName/:userId/:fileName')
+    // To get a given stamping created by a given agent
     .get(function (req, res) {
         authManager.checkAgent(req, res, function (req, res) {
+            // Check if the agent exists
             Agent.findOne(
                 { shortName: req.params.shortName },
                 function (err, agent) {
@@ -51,6 +54,7 @@ router.route('/:shortName/:userId/:fileName')
                         res.status(404).json({ message: 'No corresponding agent was found.' })
                     }
                     else {
+                        // Check if there is a stamping with that Id related to the agent
                         Stamping.findOne({
                             agentId: agent._id,
                             userId: req.params.userId,
@@ -66,6 +70,8 @@ router.route('/:shortName/:userId/:fileName')
                 })   
         })
     })
+
+    // To delete a given stamping from a given agent
     .delete(function (req, res) {
         authManager.checkAgent(req, res, function (req, res) {
             Agent.findOne(
@@ -94,11 +100,12 @@ router.route('/:shortName/:userId/:fileName')
         })
     })
 
-
+// To stamp a file from an agent
 router.route('/:shortName/:userId/stamp')
     .post(mult.single('file'), function (req, res) {
         authManager.checkAgent(req, res, function (req, res) {
             if (req.file) {
+                // Check if the agent exists
                 Agent.findOne(
                     { shortName: req.params.shortName },
                     function (err, agent) {
@@ -107,6 +114,7 @@ router.route('/:shortName/:userId/stamp')
                             res.status(400).json({ message: 'No corresponding agent was found.' })
                         }
                         else {
+                            // Check if the stamping already exists
                             Stamping.findOne({
                                     agentId: agent._id,
                                     userId: req.params.userId,
@@ -114,6 +122,7 @@ router.route('/:shortName/:userId/stamp')
                                 }, function (err, stamping) {
                                     if (err) { res.status(err.statusCode || 500).json(err) }
                                     else if (stamping === null) {
+                                        // Create the new stamping
                                         var stamping = new Stamping()
                                         stamping.agentId = agent._id
                                         stamping.userId = req.params.userId
@@ -149,10 +158,12 @@ router.route('/:shortName/:userId/stamp')
     })
 
 
+// To verify if a stamping from an agent is really on the blockchain or not
 router.route('/:shortName/:userId/verify')
     .post(mult.single('file'), function (req, res) {
         authManager.checkAgent(req, res, function (req, res) {
             if (req.file) {
+                // Check if the agent exists
                 Agent.findOne(
                     { shortName: req.params.shortName },
                     function (err, agent) {
@@ -161,6 +172,7 @@ router.route('/:shortName/:userId/verify')
                             res.status(404).json({ message: 'No corresponding agent was found.' })
                         }
                         else {
+                            // Check in our DB if the stamping exists
                             Stamping.findOne({
                                 agentId: agent._id,
                                 userId: req.params.userId,
@@ -171,6 +183,7 @@ router.route('/:shortName/:userId/verify')
                                     res.status(404).json({ message: 'No corresponding stamping was found.' })
                                 }
                                 else {
+                                    // Verify with Datatrust if the file is on the blockchain
                                     dtManager.verify(req.file.buffer, agent).then(function (r) {
                                         if (r.success) {
                                             res.json({
