@@ -12,7 +12,7 @@ var requireReconnectAuth = function (req, res, next) {
     return requireAuth(req, res, next, reconnectCallback)
 }
 
-var checkAgent = function(req, res, callback) {
+var checkAgent = function (req, res, callback) {
     if (req.decoded.agent === req.params.shortName) {
         return callback(req, res)
     } else {
@@ -64,5 +64,5 @@ var requireAuth = function (req, res, next, callback) {
 module.exports = {
     requireReconnectAuth: requireReconnectAuth,
     requireAgentAuth: requireAgentAuth,
-    checkAgent: checkAgent
+    checkAgent: checkAgent,
 }
