@@ -1,4 +1,3 @@
-const crypto = require('crypto')
 var express = require('express')
 var router = express.Router()
 
@@ -88,7 +87,7 @@ router.route('/:shortName/:userId/stamp')
                             Stamping.findOne({
                                     agentId: agent._id,
                                     userId: req.params.userId,
-                                    hashFile: crypto.createHash('sha256').update(req.file.buffer).digest('hex')
+                                    hashFile: authManager.hash(req.file.buffer)
                                 }, function (err, stamping) {
                                     if (err) { res.status(err.statusCode || 500).json(err) }
                                     else if (stamping === null) {
@@ -145,7 +144,7 @@ router.route('/:shortName/:userId/verify')
                             Stamping.findOne({
                                 agentId: agent._id,
                                 userId: req.params.userId,
-                                hashFile: crypto.createHash('sha256').update(req.file.buffer).digest('hex')
+                                hashFile: authManager.hash(req.file.buffer)
                             }, function (err, stamping) {
                                 if (err) { res.status(err.statusCode || 500).json(err) }
                                 else if (stamping === null) {

@@ -1,4 +1,3 @@
-var crypto = require('crypto')
 var express = require('express')
 var router = express.Router()
 
@@ -27,7 +26,7 @@ router.route('/')
             agent.fullName = req.body.fullName
             agent.shortName = req.body.shortName
             agent.email = req.body.email
-            agent.pwdHash = crypto.createHash('sha256').update(req.body.password).digest('hex')
+            agent.pwdHash = authManager.hash(req.body.password)
             dtManager.createUser(req.body.email, req.body.password).then(function (r) {
                 if (r.message) {
                     res.json({ message: r.message })
@@ -41,7 +40,7 @@ router.route('/')
                     })
                 }
                 else {
-                    res.json({ err: r.error })
+                    res.status(500).json({ err: r.error })
                 }
             })
         }
@@ -61,5 +60,40 @@ router.route('/')
         )
     })
 
+router.route('/:agentId')
+    .put(function (req, res) {
+        if (req.body.shortName && req.body.fullName && req.body.password && req.body.email) {
+            // TODO : Vérifier que le mail n'existe pas déjà
+            Agent.update(
+                { _id: req.params.agentId },
+                {
+                    shortName: req.body.shortName,
+                    fullName: req.body.fullName,
+                    pwdHash: authManager.hash(req.body.password),
+                    email: req.body.email
+                },
+                function (err, r) {
+                    if (err) { res.status(err.statusCode || 500).json(err) }
+                    else {
+                        res.json({ message: 'Agent updated!' })
+                    }
+                }
+            )
+        } else {
+            res.status(400).json({ message: 'Please enter a shortName, a fullName, a password and an email.' })
+        }
+    })
+    .delete(function (req, res) {
+        Agent.remove(
+            { _id: req.params.agentId },
+            function (err, r) {
+                if (err) { res.status(err.statusCode || 500).json(err) }
+                else {
+                    res.json({ message: 'Agent deleted!' })
+                }
+            }
+        )
+        // TODO : Supprimer les stampings associés aussi
+    })
 
 module.exports = router

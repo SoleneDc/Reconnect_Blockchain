@@ -7,7 +7,6 @@ var AgentSchema   = new Schema({
     shortName: String,
     pwdHash: String,
     email: String,
-    accountId: String,
     apiKey: String
 });
 
