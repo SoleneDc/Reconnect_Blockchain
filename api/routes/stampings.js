@@ -4,13 +4,15 @@ var router = express.Router()
 var Stamping = require('../models/stamping')
 var authManager = require('../utils/authManager')
 
+// This file contains all of the routes starting with /api/stampings
+// Only Reconnect can access these routes
 
 router.use(function (req, res, next) {
     authManager.requireReconnectAuth(req, res, next)
 })
 
 router.route('/')
-    // Get all the stampings in our DB
+    // To get all the stampings in our DB
     .get(function (req, res) {
         Stamping.find(
             {},
@@ -20,7 +22,8 @@ router.route('/')
                 }
             })
     })
-    // Delete all the stampings in our DB
+
+    // To delete all the stampings in our DB
     .delete(function (req, res) {
         Stamping.remove(
             {},

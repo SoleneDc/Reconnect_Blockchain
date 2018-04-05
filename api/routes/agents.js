@@ -7,6 +7,8 @@ var dtManager = require('../utils/datatrustManager')
 var authManager = require('../utils/authManager')
 var helpers = require('../utils/helpers')
 
+// This file contains all of the routes starting with /api/agents
+// Only Reconnect can access these routes
 
 router.use(function (req, res, next) {
     authManager.requireReconnectAuth(req, res, next)
@@ -14,7 +16,7 @@ router.use(function (req, res, next) {
 
 router.route('/')
 
-// To get all the information concerning all the existing agents
+    // To get all the information concerning all the existing agents
     .get(function (req, res) {
         Agent.find(
             {},
@@ -25,7 +27,7 @@ router.route('/')
             })
     })
 
-// To create an agent    
+    // To create an agent    
     .post(function (req, res) {
         if (req.body.fullName && req.body.shortName && req.body.email && req.body.password) {
             helpers.uniqueAgent(req.body.shortName, req.body.email, Agent()).then(function (r) {
@@ -61,7 +63,7 @@ router.route('/')
         }
     })
 
-// To delete all the existing agents
+    // To delete all the existing agents
     .delete(function (req, res) {
         Agent.remove(
             {},
@@ -75,16 +77,21 @@ router.route('/')
     })
 
 router.route('/:agentId')
+
+    // To edit an existing agent
     .put(function (req, res) {
         if (req.body.shortName && req.body.fullName && req.body.password && req.body.email) {
+            // Find the agent to edit
             Agent.findOne(
                 { _id: req.params.agentId },
                 function (err, agent) {
                     if (err) { res.status(err.statusCode || 500).json(err) }
                     else if (agent === null) { res.status(404).json({ message: 'No corresponding agent has been found.' }) }
                     else {
+                        // Check if shortName & email are allowed (not already used)
                         helpers.uniqueAgent(req.body.shortName, req.body.email, agent).then(function (r) {
                             if (r) {
+                                // If email or password are modified, change them also on Datatrust
                                 if (agent.email != req.body.email) {
                                     dtManager.editUserEmail(req.body.email, agent).then(function (r) {
                                         if (!r.success) { res.json(err) }
@@ -95,6 +102,7 @@ router.route('/:agentId')
                                         if (!r.success) { res.json(err) }
                                     })
                                 }
+                                // Update the agent
                                 Agent.update(
                                     { _id: req.params.agentId },
                                     {
@@ -119,12 +127,15 @@ router.route('/:agentId')
             res.status(400).json({ message: 'Please enter a shortName, a fullName, a password and an email.' })
         }
     })
+
+    // To delete an existing agent and all its associated stampings
     .delete(function (req, res) {
         Agent.remove(
             { _id: req.params.agentId },
             function (err, raw) {
                 if (err) { res.status(err.statusCode || 500).json(err) }
                 else {
+                    // Remove associated stampings
                     Stamping.remove(
                         { agentId: req.params.agentId },
                         function (err) {

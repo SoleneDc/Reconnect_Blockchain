@@ -11,12 +11,14 @@ var dtManager = require('../utils/datatrustManager')
 var authManager = require('../utils/authManager')
 var helpers = require('../utils/helpers')
 
+// This file contains all of the routes starting with /api/my_stampings
+// Agents can access the routes corresponding to their data
 
 router.use(function (req, res, next) {
     authManager.requireAgentAuth(req, res, next)
 })
 
-// To get all stampings for a given agent
+// To get all the stampings for a given agent
 router.route('/:shortName')
     .get(function (req, res) {
         authManager.checkAgent(req, res, function (req, res) {
@@ -54,7 +56,7 @@ router.route('/:shortName/:userId/:fileName')
                         res.status(404).json({ message: 'No corresponding agent was found.' })
                     }
                     else {
-                        // Check if there is a stamping with that Id related to the agent
+                        // Look for a stamping with that userId and fileName, and related to the agent
                         Stamping.findOne({
                             agentId: agent._id,
                             userId: req.params.userId,
@@ -82,6 +84,7 @@ router.route('/:shortName/:userId/:fileName')
                         res.status(404).json({ message: 'No corresponding agent was found.' })
                     }
                     else {
+                        // Look for a stamping with that userId and fileName, and related to the agent
                         Stamping.remove({
                             agentId: agent._id,
                             userId: req.params.userId,
@@ -114,7 +117,7 @@ router.route('/:shortName/:userId/stamp')
                             res.status(400).json({ message: 'No corresponding agent was found.' })
                         }
                         else {
-                            // Check if the stamping already exists
+                            // Check in our DB if the stamping already exists
                             Stamping.findOne({
                                     agentId: agent._id,
                                     userId: req.params.userId,
@@ -172,7 +175,7 @@ router.route('/:shortName/:userId/verify')
                             res.status(404).json({ message: 'No corresponding agent was found.' })
                         }
                         else {
-                            // Check in our DB if the stamping exists
+                            // Check in our DB if the stamping already exists
                             Stamping.findOne({
                                 agentId: agent._id,
                                 userId: req.params.userId,

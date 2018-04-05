@@ -3,6 +3,8 @@ const fs = require('fs')
 
 const config = require('../../config.js').reconnect
 
+// This file is meant to access Reconnect API for Rosalie service
+// Not used yet, but useful to remember the structure of the API
 
 const apiUrl = config.baseUrl + 'appli/rosalie/beneficiaire/'
 
@@ -24,8 +26,6 @@ getRosalieUser(1).then(function (r) {
     console.log(r)
 })
 
-// Upload a file from the Reconnect website
-// For our service, it's the Certificat d'hébergement, which is saved on Reconnect DB
 function uploadFile(idRosalie, input_file) {
     return config.getToken().then(function (r) {
         var url = apiUrl + idRosalie.toString() + '/uploadFile'

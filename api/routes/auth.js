@@ -8,9 +8,12 @@ var config = require('../../config')
 
 var router = express.Router()
 
+// This file contains the route for /api/auth
+// This route is open (no authentication required)
+
 router.route('/')
 
-// To allow an agent to authenticate. Return a success or not if anything goes wrong
+    // To authenticate an agent. Returns a token if all goes well
     .post(function (req, res) {
         if (req.body.shortName && req.body.password) {
             Agent.findOne({

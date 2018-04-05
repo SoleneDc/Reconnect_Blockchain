@@ -7,6 +7,8 @@ const agent = require('../models/agent.js')
 const authManager = require('../utils/authManager')
 const helpers = require('../utils/helpers')
 
+// This file contains all functions interacting with Datatrust
+
 // Create a new Agent on Datatrust
 function createUser(email, password) {
     return new Promise(function (resolve) {
@@ -51,12 +53,13 @@ function editUserPwd(password, agent) {
     })
 }
 
-// Create a new stamping on Datatrust
+// Stamp a file on Datatrust
 var stamp = function (buffer, agent) {
     return new Promise(function (resolve) {
+        var hash = helpers.hash(buffer)
         var url = config.baseUrl + '/stamp'
         var qs = { api_key: agent.apiKey }
-        var formData = { digest: helpers.hash(buffer) }
+        var formData = { digest: hash }
         request.post({ url: url, qs: qs, formData: formData, json: true }, function (err) {
             if (err) { resolve({ success: false, error: err }) }
             else { resolve({ success: true, hash: hash }) }
