@@ -22,3 +22,5 @@ Pour lancer le serveur :
 ```
 node server.js
 ```
+
+La documentation concernant ce service et son utilisation est disponible à cette adresse : https://docs.google.com/document/d/1gN-JaxezOWV3JHrkc9IbVTmpprRSgY5S1G2anILN8gI/edit
