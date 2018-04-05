@@ -2,6 +2,7 @@ var crypto = require('crypto')
 
 var Agent = require('../models/agent')
 
+// This file contains various helpers to shorten code elsewhere
 
 var hash = function (toHash) {
     return crypto.createHash('sha256').update(toHash).digest('hex')
